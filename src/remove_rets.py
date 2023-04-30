@@ -20,7 +20,7 @@ def get_ret_sled(valid_ret_labels:list[str]):
     sled = []
     sled.append('\tadd $8, %rsp\n')
     if len(valid_ret_labels) == 1:
-        sled.append('\tjmp ' + valid_ret_labels[0])
+        sled.append('\tjmp {0}\n'.format(valid_ret_labels[0]))
     else:
         for label in valid_ret_labels:
             sled.append('\tcmpq $({0}), -8(%rsp)\n'.format(label))

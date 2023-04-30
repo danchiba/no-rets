@@ -1,3 +1,2 @@
 foo:bar,_start,
 bar:fez,_start,
-syscall:_start,
