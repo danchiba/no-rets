@@ -34,7 +34,9 @@ foo:                                    # @foo
 	popq	%rbp
 	.cfi_def_cfa %rsp, 8
 	add %rsp, 8
+	cmpq $(.foo_ret_site_0), -8(%rsp)
 	je .foo_ret_site_0
+	cmpq $(.foo_ret_site_1), -8(%rsp)
 	je .foo_ret_site_1
 	call main
 .Lfunc_end0:
@@ -63,7 +65,9 @@ bar:                                    # @bar
 	popq	%rbp
 	.cfi_def_cfa %rsp, 8
 	add %rsp, 8
+	cmpq $(.bar_ret_site_0), -8(%rsp)
 	je .bar_ret_site_0
+	cmpq $(.bar_ret_site_1), -8(%rsp)
 	je .bar_ret_site_1
 	call main
 .Lfunc_end1:
