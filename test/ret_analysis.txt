@@ -1,2 +1,3 @@
-foo:bar,main,
-bar:fez,main,
+foo:bar,_start,
+bar:fez,_start,
+syscall:_start,

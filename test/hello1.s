@@ -83,10 +83,10 @@ fez:                                    # @fez
 	.size	fez, .Lfunc_end2-fez
 	.cfi_endproc
                                         # -- End function
-	.globl	main                            # -- Begin function main
+	.globl	_start                          # -- Begin function _start
 	.p2align	4, 0x90
-	.type	main,@function
-main:                                   # @main
+	.type	_start,@function
+_start:                                 # @_start
 	.cfi_startproc
 # %bb.0:                                # %entry
 	pushq	%rbp
@@ -95,22 +95,26 @@ main:                                   # @main
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register %rbp
 	subq	$32, %rsp
-	movl	$0, -16(%rbp)
 	movl	%edi, -4(%rbp)
 	movq	%rsi, -24(%rbp)
 	movl	-4(%rbp), %edi
 	callq	foo
-	movl	%eax, -12(%rbp)
+	movl	%eax, -8(%rbp)
 	movl	-4(%rbp), %edi
 	callq	bar
-	movl	%eax, -8(%rbp)
-	movl	-8(%rbp), %eax
+	cltq
+	movq	%rax, -16(%rbp)
+	#APP
+	movq	$60, %rax
+	syscall
+
+	#NO_APP
 	addq	$32, %rsp
 	popq	%rbp
 	.cfi_def_cfa %rsp, 8
 	retq
 .Lfunc_end3:
-	.size	main, .Lfunc_end3-main
+	.size	_start, .Lfunc_end3-_start
 	.cfi_endproc
                                         # -- End function
 	.ident	"clang version 17.0.0 (https://github.com/llvm/llvm-project.git 603c286334b07f568d39f6706c848f576914f323)"

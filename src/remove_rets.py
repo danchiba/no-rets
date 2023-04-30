@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import os
 import sys
 
 
@@ -19,15 +18,16 @@ def get_func_range(func_name:str, asm_lines:list[str]):
 
 def get_ret_sled(valid_ret_labels:list[str]):
     sled = []
+    sled.append('\tadd $8, %rsp\n')
     if len(valid_ret_labels) == 1:
-        return ['\tjmp ' + valid_ret_labels[0]]
+        sled.append('\tjmp ' + valid_ret_labels[0])
+    else:
+        for label in valid_ret_labels:
+            sled.append('\tcmpq $({0}), -8(%rsp)\n'.format(label))
+            sled.append('\tje {0}\n'.format(label))
 
-    sled.append('\tadd %rsp, 8\n')
-    for label in valid_ret_labels:
-        sled.append('\tcmpq $({0}), -8(%rsp)\n'.format(label))
-        sled.append('\tje {0}\n'.format(label))
+        sled.append('\tcall _start\n')
 
-    sled.append('\tcall main\n')
     return sled
 
 
@@ -63,7 +63,7 @@ def main():
         valid_ret_labels = []
         while j < len(asm_lines):
             instruction = asm_lines[j].split()
-            if len(instruction) == 2 and instruction[0] == 'callq' and instruction[1] == callee_func:# + '@PLT':
+            if len(instruction) == 2 and instruction[0] == 'callq' and instruction[1] == callee_func:
                 new_label = '.{0}_ret_site_{1}'.format(callee_func, label_idx)
                 asm_lines.insert(j+1, '{0}:\n'.format(new_label))
                 valid_ret_labels.append(new_label)

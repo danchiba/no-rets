@@ -7,8 +7,8 @@
 //
 // License: MIT
 //=============================================================================
-#include <stdio.h>
-#include <stdlib.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 __attribute__((noinline)) int foo(int a) {
     if (a % 2 == 0)
@@ -24,50 +24,21 @@ int bar(int a) {
 
 void fez() {bar(2); }
 
-int main(int argc, char** argv) {
+void _start(int argc, char** argv) {
     volatile int a = foo(argc);
-    int b = bar(argc);
+    unsigned long long b = bar(argc);
     
-    // fez();
-    // int ii = 0;
-    // for (ii = 0; ii < 10; ii++)
-    //     foo(ii);
+    fez();
 
+    __asm__(
+        "movq $60, %%rax\n\t"
+        //"movq %0, %%rdi\n\t"
+        "syscall\n\t"
+        :
+        ://"r"(b)
+        :"%rax","%rdi");
 
-    // int input = rand() % 64 + 1; // generate random number between 1 and 64
-    // int value = rand() % 10 + 1; // generate random value between 1 and 10
+    //syscall(60);
 
-    // switch(input) {
-    //     case 1:
-    //         printf("Add %d to value\n", value);
-    //         value += value;
-    //         break;
-    //     case 2:
-    //         printf("Subtract %d from value\n", value);
-    //         value -= value;
-    //         break;
-    //     case 3:
-    //         printf("Multiply value by %d\n", value);
-    //         value *= value;
-    //         break;
-    //     case 4:
-    //         printf("Divide value by %d\n", value);
-    //         value /= value;
-    //         break;
-    //     // Repeat for cases 5 through 64
-    //     case 5:
-    //         printf("Add %d to value\n", value);
-    //         value += value;
-    //         break;
-    //     // ...
-    //     case 64:
-    //         printf("Divide value by %d\n", value);
-    //         value /= value;
-    //         break;
-    //     default:
-    //         printf("Invalid input\n");
-    //         break;
-    // }
-
-    return b;
+    //return b;
 }
